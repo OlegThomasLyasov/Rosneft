@@ -24,7 +24,7 @@ await generateData().then(() => {loading = false});
 
 <Layout title="Web-визуализатор">
     <!--если таблица с пагинацией -->
-    <!-- {loading ? <Loader/> : <TablePagination data={data} client:only="vue"/>} -->
+    {loading ? <Loader/> : <TablePagination data={data} client:only="vue"/>}
     <!--если таблица обычная (все 500 000 элементов подряд) -->
-	{loading ? <Loader/> : <Table data={data}/>}
+    <!--{loading ? <Loader/> : <Table data={data}/>} -->
 </Layout>

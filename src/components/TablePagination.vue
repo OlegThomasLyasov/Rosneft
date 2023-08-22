@@ -17,7 +17,7 @@
           </thead>
           <tbody>
               <tr v-for="(element, index) of paginatedData" :key="index">
-                  <th >{{ index }}</th>
+                  <th >{{ index + pageNumber * size }}</th>
                   <th >{{ element }}</th>
               </tr>
           </tbody>
