@@ -1,0 +1,30 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Table from '../components/TableDefault.vue';
+import TablePagination from '../components/TablePagination.vue';
+import Loader from '@components/Loader.vue';
+
+
+// массив с данными
+const data: number[] = [];
+// количество элементов
+const countElements = 500000;
+// если данные подгружаются
+let loading = true;
+// функция подготовки данных
+async function generateData() {
+	for (let index = 0; index < countElements; index++) {
+        data.push(index);
+    }
+}
+// завершаем загрузку
+await generateData().then(() => {loading = false});
+
+---
+
+<Layout title="Web-визуализатор">
+    <!--если таблица с пагинацией -->
+    <!-- {loading ? <Loader/> : <TablePagination data={data} client:only="vue"/>} -->
+    <!--если таблица обычная (все 500 000 элементов подряд) -->
+	{loading ? <Loader/> : <Table data={data}/>}
+</Layout>
