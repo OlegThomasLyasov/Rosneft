@@ -1,5 +1,5 @@
 <template>
-<section>
+<div>
     <table>
       <thead>
         <tr>
@@ -20,7 +20,7 @@
       <button @click="nextPage()">&#8250;</button>
       <button @click="bottom()">&raquo;</button>
     </div>
-</section>
+</div>
 </template>
 
 <script>
@@ -93,8 +93,12 @@ export default {
         this.freeWidth = 100;
         this.widthOne = 50;
       }
-      else {
+      else if (window.innerWidth >= 768 && window.innerWidth <= 1440) {
         this.freeWidth = 450;
+        this.widthOne = 120;
+      }
+      else if (window.innerWidth > 1440) {
+        this.freeWidth = 750;
         this.widthOne = 120;
       }
     },

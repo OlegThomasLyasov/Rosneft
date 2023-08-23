@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <div>
     <h1 class="title"> Web-визуализатор (просмоторщик)</h1>
     <div class="tabs">
       <button
@@ -12,7 +12,7 @@
     <div class="tab-content">
       <component :is="active" :data="data"/>
     </div>
-  </section>
+  </div>
 </template>
 
 <script>
@@ -50,6 +50,7 @@ export default {
 .title
   font-size 24px
   color green
+  margin-top 10px
 
 .tab-wrapper
   width 100%

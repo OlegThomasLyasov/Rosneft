@@ -1,27 +1,25 @@
 <template>
-  <section>
-    <div class="wrapper">
-      <table>
-        <thead>
-        <tr>
-          <th v-for="col in cols" :key="col">col{{col}}</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="row in paginatedData" :key="row">
-          <th v-for="col in row" :key="col">{{col}}</th>
-        </tr>
-        </tbody>
-      </table>
-      <div ref="scroller" class="scroller">
-        <div
-            class="handle"
-            :style="{top:htop+'px'}"
-            @mousedown="start_handle"
-        ></div>
-      </div>
+  <div class="wrapper">
+    <table>
+      <thead>
+      <tr>
+        <th v-for="col in cols" :key="col">col{{col}}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr v-for="row in paginatedData" :key="row">
+        <th v-for="col in row" :key="col">{{col}}</th>
+      </tr>
+      </tbody>
+    </table>
+    <div ref="scroller" class="scroller">
+      <div
+          class="handle"
+          :style="{top:htop+'px'}"
+          @mousedown="start_handle"
+      ></div>
     </div>
-  </section>
+  </div>
 </template>
 
 <script>
@@ -59,6 +57,7 @@ export default {
     },
   },
   mounted () {
+    document.body.style.overflowY = "hidden";
     this.checkSize();
     // считаем количество колонок
     this.cols = Math.floor((window.innerWidth - this.freeWidth) / this.widthOne);
@@ -77,6 +76,9 @@ export default {
     window.onmousemove = this.handle;
     window.onmouseup = this.stop_handle;
   },
+  unmounted() {
+    document.body.style.overflowY = "auto";
+  },
   watch: {
     cols(size) {
       const num = Math.floor(this.start / size);
@@ -94,12 +96,17 @@ export default {
   methods: {
     // проверка под мобильный размер
     checkSize() {
+      this.freeHeight = 150;
       if (window.innerWidth < 768) {
         this.freeWidth = 100;
         this.widthOne = 50;
       }
-      else {
+      else if (window.innerWidth >= 768 && window.innerWidth <= 1440) {
         this.freeWidth = 450;
+        this.widthOne = 120;
+      }
+      else if (window.innerWidth > 1440) {
+        this.freeWidth = 750;
         this.widthOne = 120;
       }
     },
@@ -137,7 +144,6 @@ export default {
   position relative
   width 100%
   height 100%
-
 .buttonsWrapper
   margin-top 10px
   display flex
