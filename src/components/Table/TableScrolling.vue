@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper">
+  <div class="wrapper" v-resize="checkSize">
     <table>
       <thead>
       <tr>
@@ -40,6 +40,7 @@ export default {
       lenData: this.data.length - 1,
       // ширина 1 элемента
       widthOne: 120,
+      // высота 1 элемента
       heightOne: 40,
       freeWidth: 450,
       freeHeight: 150,
@@ -59,20 +60,6 @@ export default {
   mounted () {
     document.body.style.overflowY = "hidden";
     this.checkSize();
-    // считаем количество колонок
-    this.cols = Math.floor((window.innerWidth - this.freeWidth) / this.widthOne);
-    // считаем количество рядов
-    this.rows =  Math.floor((window.innerHeight - this.freeHeight) / this.heightOne);
-    // нужное количество элементов из массива
-    this.page_size = this.cols * this.rows;
-    this.page = this.data.slice(1, this.page_size);
-    window.onresize = () => {
-      this.checkSize();
-      this.cols = Math.floor((window.innerWidth - this.freeWidth) / this.widthOne);
-      this.rows =  Math.floor((window.innerHeight - this.freeHeight) / this.heightOne);
-      // нужное количество элементов
-      this.page_size = this.cols * this.rows;
-    }
     window.onmousemove = this.handle;
     window.onmouseup = this.stop_handle;
   },
@@ -80,35 +67,49 @@ export default {
     document.body.style.overflowY = "auto";
   },
   watch: {
-    cols(size) {
+    // если меняется стартовая, то пересчитываем
+    start(value) {
+      this.start = value;
+      this.page = this.data.slice(this.start, this.start + this.page_size);
+    },
+    // если меняется количество элементво, то берем нужное
+    page_size(size) {
       const num = Math.floor(this.start / size);
       this.start = num * this.page_size + 1;
-      this.page = this.data.slice(this.start, this.start + this.page_size);
       this.pages = Math.floor(this.lenData / this.page_size + .5);
-    },
-    rows(size) {
-      const num = Math.floor(this.start / size);
-      this.start = num * this.page_size + 1;
       this.page = this.data.slice(this.start, this.start + this.page_size);
-      this.pages = Math.floor(this.lenData / this.page_size + .5);
-    },
+    }
   },
   methods: {
-    // проверка под мобильный размер
     checkSize() {
+      const windowWidth =  window.screen.width;
+      const windowHeight =  window.screen.height;
+      this.widthOne = 120;
       this.freeHeight = 150;
-      if (window.innerWidth < 768) {
+      // проверка под мобильный размер
+      if (windowWidth < 768) {
         this.freeWidth = 100;
         this.widthOne = 50;
       }
-      else if (window.innerWidth >= 768 && window.innerWidth <= 1440) {
+      // проверка под планшетный размер
+      else if (windowWidth >= 768 && windowWidth <= 1024) {
+        this.freeWidth = 250;
+      }
+      // проверка под комп размер
+      else if (windowWidth > 1024 && windowWidth <= 1440) {
         this.freeWidth = 450;
-        this.widthOne = 120;
       }
-      else if (window.innerWidth > 1440) {
+      // проверка под большой комп. размер
+      else if (windowWidth > 1440) {
         this.freeWidth = 750;
-        this.widthOne = 120;
+        this.freeHeight = 300;
       }
+      // получаем нужно количество колонок
+      this.cols = Math.floor((windowWidth - this.freeWidth) / this.widthOne);
+      // получаем нужно количество рядов
+      this.rows =  Math.floor((windowHeight - this.freeHeight) / this.heightOne);
+      // подсчитываем общее количество элементов
+      this.page_size = this.cols * this.rows;
     },
     start_handle() {
       if (this.hndle) return
@@ -144,6 +145,7 @@ export default {
   position relative
   width 100%
   height 100%
+
 .buttonsWrapper
   margin-top 10px
   display flex
@@ -177,10 +179,11 @@ td
   position absolute
   top 30px
   bottom 14px
-  right 8px
+  right 2px
   width 4px
   background red
-
+  +mediaQuery768()
+    right 15px
 .handle
   position absolute
   width 10px

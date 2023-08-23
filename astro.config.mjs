@@ -8,21 +8,23 @@ const __dirname = dirname(__filename);
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [vue()],
-  vite: {
-    css: {
-        preprocessorOptions: {
-            // подключение глобальных миксинов
-            stylus: {
-              additionalData: `
-                @import "${path.resolve(__dirname, 'src/styles/mixins.styl')}"`
+    integrations: [vue({
+        appEntrypoint: '/src/pages/_app'
+    }),],
+    vite: {
+        css: {
+            preprocessorOptions: {
+                // подключение глобальных миксинов
+                stylus: {
+                  additionalData: `
+                    @import "${path.resolve(__dirname, 'src/styles/mixins.styl')}"`
+                }
             }
         }
+    },
+    // локально старт на 3001 порту
+    server: {
+        port: 3001,
+        host: true
     }
-},
-  // локально старт на 3001 порту
-  server: {
-    port: 3001,
-    host: true
-  }
 });

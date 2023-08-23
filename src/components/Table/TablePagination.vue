@@ -1,5 +1,5 @@
 <template>
-<div>
+<div v-resize="checkSize">
     <table>
       <thead>
         <tr>
@@ -41,6 +41,7 @@ export default {
       lenData: this.data.length - 1,
       // ширина 1 элемента
       widthOne: 120,
+      // высота 1 элемента
       heightOne: 40,
       freeWidth: 450,
       freeHeight: 150,
@@ -56,81 +57,80 @@ export default {
     },
   },
   mounted () {
+    // просмотр размера экрана
     this.checkSize();
-    // считаем количество колонок
-    this.cols = Math.floor((window.innerWidth - this.freeWidth) / this.widthOne);
-    // считаем количество рядов
-    this.rows =  Math.floor((window.innerHeight - this.freeHeight) / this.heightOne);
-    // нужное количество элементов из массива
-    this.page_size = this.cols * this.rows;
+    // определяем какие элементы отрисовать
     this.page = this.data.slice(1, this.page_size);
-    window.onresize = () => {
-      this.checkSize();
-      this.cols = Math.floor((window.innerWidth - this.freeWidth) / this.widthOne);
-      this.rows =  Math.floor((window.innerHeight - this.freeHeight) / this.heightOne);
-      // нужное количество элементов
-      this.page_size = this.cols * this.rows;
-    }
   },
   watch: {
-    cols(size) {
+    // если меняется стартовая, то пересчитываем
+    start(value) {
+      this.start = value;
+      this.page = this.data.slice(this.start, this.start + this.page_size);
+    },
+    // если меняется количество элементво, то берем нужное
+    page_size(size) {
       const num = Math.floor(this.start / size);
       this.start = num * this.page_size + 1;
-      this.page = this.data.slice(this.start, this.start + this.page_size);
       this.pages = Math.floor(this.lenData / this.page_size + .5);
-    },
-    rows(size) {
-      const num = Math.floor(this.start / size);
-      this.start = num * this.page_size + 1;
       this.page = this.data.slice(this.start, this.start + this.page_size);
-      this.pages = Math.floor(this.lenData / this.page_size + .5);
-    },
+    }
   },
   methods: {
-    // проверка под мобильный размер
     checkSize() {
-      if (window.innerWidth < 768) {
-        this.freeWidth = 100;
+      const windowWidth =  window.screen.width;
+      const windowHeight =  window.screen.height;
+      // проверка под мобильный размер
+      if (windowWidth < 768) {
+        this.freeWidth = 50;
         this.widthOne = 50;
       }
-      else if (window.innerWidth >= 768 && window.innerWidth <= 1440) {
+      // проверка под планшетный размер
+      else if (windowWidth >= 768 && windowWidth <= 1024) {
+        this.freeWidth = 250;
+        this.widthOne = 120;
+      }
+      // проверка под комп размер
+      else if (windowWidth > 1024 && windowWidth <= 1440) {
         this.freeWidth = 450;
         this.widthOne = 120;
       }
-      else if (window.innerWidth > 1440) {
+      // проверка под большой комп. размер
+      else if (windowWidth > 1440) {
         this.freeWidth = 750;
         this.widthOne = 120;
       }
+      // получаем нужно количество колонок
+      this.cols = Math.floor((windowWidth - this.freeWidth) / this.widthOne);
+      // получаем нужно количество рядов
+      this.rows =  Math.floor((windowHeight - this.freeHeight) / this.heightOne);
+      // подсчитываем общее количество элементов
+      this.page_size = this.cols * this.rows;
     },
     go() {
       // переход на конкретную страницу
       this.start = (this.num - 1) * this.page_size + 1;
-      this.page = this.data.slice(this.start, this.start + this.page_size);
     },
     prevPage() {
       // переход к предыдущей странице
       if (this.num === 1) return;
       --this.num;
       this.start -= this.page_size;
-      this.page = this.data.slice(this.start, this.start + this.page_size);
     },
     nextPage() {
       // переход к следующей странице
       if (this.num === this.pages) return;
       ++this.num;
       this.start += this.page_size;
-      this.page = this.data.slice(this.start, this.start + this.page_size);
     },
     top() {
       // переход к первой странице
       this.start = this.num = 1;
-      this.page = this.data.slice(this.start, this.start + this.page_size);
     },
     bottom() {
       // переход к последней странице
       this.num = this.pages;
       this.start = (this.num - 1) * this.page_size;
-      this.page = this.data.slice(this.start, this.start + this.page_size);
     }
   },
   computed: {
