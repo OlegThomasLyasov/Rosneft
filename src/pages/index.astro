@@ -1,7 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Table from '../components/TableDefault.vue';
-import TablePagination from '../components/TablePagination.vue';
+import Table from '@components/Table/index.vue';
 import Loader from '@components/Loader.vue';
 
 
@@ -23,8 +22,5 @@ await generateData().then(() => {loading = false});
 ---
 
 <Layout title="Web-визуализатор">
-    <!--если таблица с пагинацией -->
-    {loading ? <Loader/> : <TablePagination data={data} client:only="vue"/>}
-    <!--если таблица обычная (все 500 000 элементов подряд) -->
-    <!--{loading ? <Loader/> : <Table data={data}/>} -->
+    {loading ? <Loader/> : <Table data={data} client:only="vue"/>}
 </Layout>
